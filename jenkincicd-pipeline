@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('first git clone ') {
+            steps {
+                echo 'clones source from git'
+		git branch: 'main', url: 'https://github.com/devikaangiti/project.git'
+               
+            }
+        }
+        stage('second build artifact') {
+            steps {
+                echo 'builds the code using mven'
+		sh 'mvn clean install'
+		
+            }
+        }
+      stage('deployes to tomcat') {
+            steps {
+                echo 'deployes .war to tomcat'
+		deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat', path: '', url: 'http://13.217.194.42:8090/')], contextPath: 'mcapp', war: '**/*.war'
+            }
+        }
+
+    }
+}
